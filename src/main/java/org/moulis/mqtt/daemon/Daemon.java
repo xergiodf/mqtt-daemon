@@ -23,7 +23,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.moulis.mqtt.daemon.client.DaemonCallback;
 import org.moulis.mqtt.daemon.client.DaemonClient;
-import org.moulis.mqtt.daemon.config.DaemonParams;
+import org.moulis.mqtt.daemon.config.DaemonConfig;
+import org.moulis.mqtt.daemon.config.DaemonConfigLoader;
 
 public final class Daemon {
 
@@ -31,31 +32,30 @@ public final class Daemon {
 
 	public static void main(String[] args) {
 		try {
-			LOG.debug("Creating daemon client with BROKER=\""
-					+ DaemonParams.BROKER_URI + "\" and ID=\""
-					+ DaemonParams.DAEMON_ID + "\"");
-			DaemonClient client = null;
-			
-			try {
-				client = new DaemonClient();
-				client.setCallback(new DaemonCallback());
-				LOG.debug("Daemon created!");
-				LOG.debug("Connecting to broker...");
-				client.connect();
-				LOG.debug("Connected!");
-				LOG.debug("Subscribing to TOPIC=\""
-						+ DaemonParams.DAEMON_SUB_TOPIC + "\"");
-				client.subscribe(DaemonParams.DAEMON_SUB_TOPIC);
-				LOG.debug("Subscribed!");
-			} finally {
-//				if (client != null && client.isConnected()) {
-//					client.disconnect();
-//				}
-			}
+			// Load settings first :
+			DaemonConfigLoader daemonConfigLoader = new DaemonConfigLoader();
+			daemonConfigLoader.loadDaemonConfiguration(args);
+
+			// Launch daemon :
+			String daemonId = DaemonConfig.CONFIG.getDaemonId();
+			String daemonLookupTopic = DaemonConfig.CONFIG
+					.getDaemonLookUpTopic();
+			String brokerUri = DaemonConfig.CONFIG.getBrokerUri();
+
+			LOG.debug("Creating daemon client with BROKER=\"" + brokerUri
+					+ "\" and ID=\"" + daemonId + "\"");
+			DaemonClient client = new DaemonClient();
+			client.setCallback(new DaemonCallback());
+			LOG.debug("Daemon created!");
+			LOG.debug("Connecting to broker...");
+			client.connect();
+			LOG.debug("Connected!");
+			LOG.debug("Subscribing to TOPIC=\"" + daemonLookupTopic + "\"");
+			client.subscribe(daemonLookupTopic);
+			LOG.debug("Subscribed!");
 
 		} catch (MqttException e) {
-			e.printStackTrace();
+			LOG.error("Init Error", e);
 		}
 	}
-
 }

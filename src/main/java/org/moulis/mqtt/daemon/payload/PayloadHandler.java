@@ -27,7 +27,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
-import org.moulis.mqtt.daemon.config.DaemonParams;
+import org.moulis.mqtt.daemon.config.DaemonConfig;
+import org.moulis.mqtt.daemon.config.DaemonConstant;
 import org.moulis.mqtt.daemon.exception.DaemonException;
 
 public final class PayloadHandler extends Thread {
@@ -48,10 +49,10 @@ public final class PayloadHandler extends Thread {
 	public void run() {
 		try {
 			String[] payloadContent = payload
-					.split(DaemonParams.PAYLOAD_FIELD_SEPARATOR);
+					.split(DaemonConstant.PAYLOAD_FIELD_SEPARATOR);
 			if (payloadContent != null && payloadContent.length == 4) {
-				String answerTopic = DaemonParams.DAEMON_SUB_TOPIC + "/"
-						+ payloadContent[0];
+				String answerTopic = DaemonConfig.CONFIG.getDaemonLookUpTopic()
+						+ "/" + payloadContent[0];
 				String result = calculateResult(payloadContent);
 				sendAnswer(answerTopic, result);
 			} else {
@@ -70,7 +71,7 @@ public final class PayloadHandler extends Thread {
 		try {
 			LOG.debug("Sending answer \"" + result + "\" into TOPIC=\""
 					+ answerTopic + "\"");
-			answerClient = new MqttClient(DaemonParams.BROKER_URI,
+			answerClient = new MqttClient(DaemonConfig.CONFIG.getBrokerUri(),
 					MqttClient.generateClientId());
 			answerClient.connect();
 			answerClient.publish(answerTopic,
@@ -101,7 +102,7 @@ public final class PayloadHandler extends Thread {
 			throw new DaemonException(
 					"Unrecognized operator, ignoring payload...");
 		}
-		return DaemonParams.RESULT_FORMATER.format(result);
+		return DaemonConstant.RESULT_FORMATER.format(result);
 	}
 
 	public String getPayload() {

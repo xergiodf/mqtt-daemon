@@ -23,8 +23,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.moulis.mqtt.daemon.config.DaemonParams;
+import org.moulis.mqtt.daemon.config.DaemonConfig;
 import org.moulis.mqtt.daemon.payload.PayloadHandler;
+import org.moulis.mqtt.daemon.util.DaemonUtil;
 
 public final class DaemonCallback implements MqttCallback {
 
@@ -45,13 +46,18 @@ public final class DaemonCallback implements MqttCallback {
 	public void messageArrived(String topic, MqttMessage message)
 			throws Exception {
 		if (message != null) {
-			if (DaemonParams.DAEMON_SUB_TOPIC.equals(topic)) {
+			if (DaemonConfig.CONFIG.getDaemonLookUpTopic().equals(topic)) {
 				byte[] payload = message.getPayload();
 				if (payload != null && payload.length > 0) {
 					String payloadContent = new String(payload, "UTF-8");
-					LOG.info("Handle payload \"" + payloadContent + "\"");
-					PayloadHandler payloadHandler = new PayloadHandler(payloadContent);
-					payloadHandler.start();
+					if (!DaemonUtil.isNullOrEmpty(payloadContent)) {
+						LOG.info("Handle payload \"" + payloadContent + "\"");
+						PayloadHandler payloadHandler = new PayloadHandler(
+								payloadContent);
+						payloadHandler.start();
+					} else {
+						LOG.error("Received an empty payload... Ignored!");
+					}
 				} else {
 					LOG.error("Received an empty payload... Ignored!");
 				}

@@ -17,17 +17,17 @@
  *   along with Daemon.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package org.moulis.mqtt.daemon.client;
+package org.moulis.mqtt.daemon.config;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.moulis.mqtt.daemon.config.DaemonConfig;
+/**
+ * @noimplement
+ */
+public interface DaemonPropertiesKeys {
 
-public final class DaemonClient extends MqttClient {
+	public static final String BROKER_URI_PROPERTY_KEY = "broker_uri";
 
-	public DaemonClient() throws MqttException {
-		super(DaemonConfig.CONFIG.getBrokerUri(), DaemonConfig.CONFIG
-				.getDaemonId());
-	}
+	public static final String DAEMON_ID_PROPERTY_KEY = "daemon_id";
+
+	public static final String DAEMON_LOOKUP_TOPIC_PROPERTY_KEY = "daemon_look_up_topic";
 
 }

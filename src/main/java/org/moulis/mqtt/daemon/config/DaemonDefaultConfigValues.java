@@ -19,21 +19,18 @@
  */
 package org.moulis.mqtt.daemon.config;
 
-import java.text.DecimalFormat;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
-public interface DaemonParams {
+/**
+ * @noimplement
+ */
+public interface DaemonDefaultConfigValues {
 
-	public static final String BROKER_URI = "tcp://m2m.eclipse.org:1883";
+	public static final String BROKER_URI_DEFAULT_VALUE = "tcp://m2m.eclipse.org:1883";
 
-	public static final String DAEMON_ID = MqttClient.generateClientId();
+	public static final String DAEMON_ID_DEFAULT_VALUE = MqttClient
+			.generateClientId();
 
-	public static final String DAEMON_SUB_TOPIC = "org/moulis/calctools";
-
-	public static final String PAYLOAD_FIELD_SEPARATOR = "#";
-
-	public static final DecimalFormat RESULT_FORMATER = new DecimalFormat(
-			"0.00");
+	public static final String DAEMON_LOOKUP_TOPIC_DEFAULT_VALUE = "org/moulis/calctools";
 
 }

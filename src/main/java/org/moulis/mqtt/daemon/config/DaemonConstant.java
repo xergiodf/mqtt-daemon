@@ -17,17 +17,18 @@
  *   along with Daemon.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package org.moulis.mqtt.daemon.client;
+package org.moulis.mqtt.daemon.config;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.moulis.mqtt.daemon.config.DaemonConfig;
+import java.text.DecimalFormat;
 
-public final class DaemonClient extends MqttClient {
+/**
+ * @noimplement
+ */
+public interface DaemonConstant {
 
-	public DaemonClient() throws MqttException {
-		super(DaemonConfig.CONFIG.getBrokerUri(), DaemonConfig.CONFIG
-				.getDaemonId());
-	}
+	public static final String PAYLOAD_FIELD_SEPARATOR = "#";
+
+	public static final DecimalFormat RESULT_FORMATER = new DecimalFormat(
+			"0.00");
 
 }
