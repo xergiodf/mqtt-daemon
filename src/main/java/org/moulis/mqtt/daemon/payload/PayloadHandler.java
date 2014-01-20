@@ -95,7 +95,17 @@ public final class PayloadHandler extends Thread {
 		} else if ("-".equals(operator)) {
 			result = x - y;
 		} else if ("/".equals(operator)) {
-			result = x / y;
+			if (y == 0) {
+				if (x > 0) {
+					result = Double.POSITIVE_INFINITY;
+				} else if (x < 0) {
+					result = Double.NEGATIVE_INFINITY;
+				} else {
+					result = Double.NaN;
+				}
+			} else {
+				result = x / y;
+			}
 		} else if ("*".equals(operator)) {
 			result = x * y;
 		} else {
